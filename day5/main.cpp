@@ -1,40 +1,77 @@
 #include <iostream>
 #include <fstream>
-#include <set>
 #include <sstream>
 #include <vector>
 #include <array>
+#include <limits>
+
+unsigned long long convertSeed (unsigned long long seed, std::vector<std::array<unsigned long long, 3>>& maps) {
+
+    for (const std::array<unsigned long long, 3> map: maps) {
+        if (seed >= map[1] && seed < map[1] + map[2]) {
+            seed = map[0] + (seed - map[1]);
+            break;
+        }
+    }
+
+    return seed;
+}
 
 int main() {
 
-    std::ifstream input("test-input.txt");
+    std::ifstream input("input.txt");
     std::string line;
+    std::stringstream iss;
+    std::vector<unsigned long long> seeds;
+    std::vector<std::array<unsigned long long, 3>> maps;
+    std::string currentVector;
 
-    std::set<int> seeds;
-    std::vector<std::array<unsigned int, 3>> ranges;
-    std::string currentMap;
+    int count = 0;
+    std::array<unsigned long long, 3> map = {};
 
-    while (std::getline(input, line)) {
+    while (input >> line) {
+        iss << ' ' << line;
+    }
 
-        std::istringstream iss(line);
+    input.close();
 
-        std::string word;
-        while (iss >> word) {
-            if (isdigit(word[0])) {
-                if (currentMap == "seeds:") {
-                    seeds.emplace(std::stoul(word));
+    while (iss >> line) {
+        if (line == "seeds:") {
+            currentVector = "seeds";
+
+        } else if (line == "map:") {
+            currentVector = "map";
+
+            for (unsigned long long& seed: seeds) {
+                seed = convertSeed(seed, maps);
+            }
+
+            maps = {};
+
+        } else if (isdigit(line[0])) {
+            if (currentVector == "seeds") {
+                seeds.push_back(std::stoul(line));
+
+            } else if (currentVector == "map") {
+                map[count] = std::stoul(line);
+                count++;
+                if (count == 3) {
+                    maps.push_back(map);
+                    map = {};
+                    count = 0;
                 }
-            } else if (word != "map"){
-                currentMap = word;
             }
         }
-
     }
 
-    std::cout << "Seeds:" << '\n';
-    for (unsigned long seed: seeds) {
-        std::cout << seed << '\n';
+    unsigned long long min = std::numeric_limits<unsigned long long>::max();
+    for (unsigned long long seed: seeds) {
+        if (seed < min) {
+            min = seed;
+        }
     }
+
+    std::cout << min << std::endl;
 
     return 0;
 }
