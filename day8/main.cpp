@@ -9,6 +9,7 @@ int main() {
     std::ifstream input("input.txt");
     std::string line;
     std::vector<int> directions;
+    std::vector<std::string> startingNodes;
 
     std::unordered_map<std::string, std::tuple<std::string, std::string>> coordinates;
 
@@ -17,6 +18,7 @@ int main() {
         if (line.find('=') != std::string::npos) {
 
             std::string position = line.substr(0, 3);
+            if (position[2] == 'A') { startingNodes.push_back(position); }
             std::tuple<std::string, std::string> coordinate(line.substr(7, 3), line.substr(12, 3));
 
             coordinates[position] = coordinate;
@@ -29,25 +31,29 @@ int main() {
         }
     }
 
-    int i = 0;
-    int currentCount = 0;
-    std::string currentPosition = "AAA";
-    std::string newPosition;
+    std::vector<unsigned long int> steps;
 
-    while (currentPosition != "ZZZ") {
-        if (i >= directions.size()) { i = 0; }
-        if (directions[i] == 0) {
-            newPosition = std::get<0>(coordinates[currentPosition]);
-        } else {
-            newPosition = std::get<1>(coordinates[currentPosition]);
+    for (auto& node: startingNodes) {
+        int i = 0;
+        unsigned long int currentStep = 0;
+        while (node[2] != 'Z') {
+            if (i >= directions.size()) { i = 0; }
+
+            if (directions[i] == 0) {
+                node = std::get<0>(coordinates[node]);
+            } else {
+                node = std::get<1>(coordinates[node]);
+            }
+
+            i++;
+            currentStep++;
         }
-        currentPosition = newPosition;
-
-        currentCount++;
-        i++;
+        steps.push_back(currentStep);
     }
 
-    std::cout << currentCount << std::endl;
+    for (const auto& step: steps) {
+        std::cout << step << " ";
+    }
 
     return 0;
 }
