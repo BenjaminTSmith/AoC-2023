@@ -25,6 +25,19 @@ int getNextNum(std::vector<int>& list) {
     return list[list.size() - 1] + getNextNum(newDifferences);
 }
 
+int getPreviousNum(std::vector<int>& list) {
+    if (allZero(list)) {
+        return 0;
+    }
+
+    std::vector<int> newDifferences;
+    for (size_t i = 1; i < list.size(); i++) {
+        newDifferences.push_back(list[i] - list[i - 1]);
+    }
+
+    return list[0] - getPreviousNum(newDifferences);
+}
+
 int main() {
 
     std::ifstream input("input.txt");
@@ -45,7 +58,7 @@ int main() {
 
     int sum = 0;
     for (auto& sequence: sequences) {
-        sum += getNextNum(sequence);
+        sum += getPreviousNum(sequence);
     }
 
     std::cout << sum << std::endl;
