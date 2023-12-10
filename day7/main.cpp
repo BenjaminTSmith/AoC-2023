@@ -1,13 +1,30 @@
 #include <iostream>
 #include <fstream>
+#include <utility>
 #include <vector>
 #include <sstream>
+
+struct Hand {
+
+    std::string cards;
+    int bid;
+
+    Hand(std::string cards, int bid) {
+        this->cards = std::move(cards);
+        this->bid = bid;
+    }
+
+    bool operator>(const Hand& otherHand) {
+        int count
+    }
+
+};
 
 int main() {
 
     std::ifstream input("test-input.txt");
     std::string line;
-    std::vector<std::pair<std::string, int>> hands;
+    std::vector<Hand> hands;
 
     while (std::getline(input, line)) {
         std::string word;
@@ -26,7 +43,7 @@ int main() {
 
     std::cout << "Hands: | Bets: " << '\n';
     for (const auto& hand: hands) {
-        std::cout << std::get<0>(hand) << "    " << std::get<1>(hand) << '\n';
+        std::cout << hand.cards << "   " << hand.bid << '\n';
     }
 
     return 0;
