@@ -15,7 +15,8 @@ struct Hand {
     }
 
     bool operator>(const Hand& otherHand) {
-        int count
+
+
     }
 
 };
