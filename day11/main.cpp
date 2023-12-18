@@ -5,36 +5,54 @@
 
 int main() {
 
-    std::ifstream input("test-input.txt");
-    std::string line;
-    std::vector<std::string> cosmos;
+    std::ifstream input("input.txt");
+    std::string row;
+    std::vector<std::string> observatory;
 
-    while (std::getline(input, line)) {
-
-        if (std::all_of(line.begin(), line.end(), [](char i){return i == '.';})) {
-            for (int i = 0; i < 2; i++) { cosmos.push_back(line); }
-        } else {
-            cosmos.push_back(line);
+    // expand rows
+    while (input >> row) {
+        if (std::all_of(row.begin(), row.end(), [](char i){return i == '.';})) {
+            observatory.push_back(row);
         }
-
+        observatory.push_back(row);
     }
 
-    int j;
-    for (int i = 0; i < cosmos.size(); i++) {
+    // expand columns
+    for (size_t i = 0; i < observatory[0].size(); i++) {
         bool expand = true;
-        for (j = 0; j < cosmos[i].size(); j++) {
-            if (cosmos[i][j] == '#') { expand = false; }
-        }
-        if (expand) {
-            for (int i = 0; i < cosmos.size(); i++) {
-                cosmos[i].insert(cosmos[i].begin() + j, '.');
+        for (auto& line: observatory) {
+            if (line[i] == '#') {
+                expand = false;
+                break;
             }
         }
+        if (expand) {
+            for (auto& line: observatory) {
+                line.insert(i, 1, '.');
+            }
+            i++;
+        }
     }
 
-    for (const auto& row: cosmos) {
-        std::cout << row << '\n';
+    std::vector<std::pair<int, int>> galaxies;
+    int sum = 0;
+
+    for (int i = 0; i < observatory.size(); i++) {
+        for (int j = 0; j < observatory[i].size(); j++) {
+            if (observatory[i][j] == '#') { galaxies.emplace_back(i, j); }
+        }
     }
+
+    for (auto galaxy1: galaxies) {
+        for (auto galaxy2: galaxies) {
+            if (galaxy1 == galaxy2) { break; }
+
+            sum += abs(std::get<0>(galaxy1) - std::get<0>(galaxy2)) + abs(std::get<1>(galaxy1) - std::get<1>(galaxy2));
+
+        }
+    }
+
+    std::cout << sum << std::endl;
 
     return 0;
 }

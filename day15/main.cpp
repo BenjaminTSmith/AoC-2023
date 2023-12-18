@@ -1,13 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <array>
 
 int main() {
 
     std::ifstream input("input.txt");
     std::string line;
     std::vector<std::string> instructions;
-
+    std::array<std::string, 256> lenses;
     input >> line;
 
     size_t pos;
