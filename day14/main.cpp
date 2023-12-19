@@ -61,7 +61,7 @@ void spinCycle(std::vector<std::string>& rocks) {
 
 int main() {
 
-    std::ifstream input("test-input.txt");
+    std::ifstream input("input.txt");
     std::string line;
 
     std::vector<std::string> rocks;
@@ -71,30 +71,35 @@ int main() {
     }
 
     std::vector<std::vector<std::string>> prev;
-    int cycleStart;
+    int cycleStart = -1;
     int cycleEnd;
     for (unsigned long long i = 0; i < 1000000000; i++) {
-        spinCycle(rocks);
         prev.push_back(rocks);
-        bool found = true;
+        spinCycle(rocks);
         int j;
-        for (j = 0; j < prev.size(); i++) {
+        for (j = 0; j < prev.size(); j++) {
+            bool found = true;
             for (int k = 0; k < rocks.size(); k++) {
                 if (prev[j][k] != rocks[k]) {
                     found = false;
                     break;
                 }
             }
-            if (!found) { break; }
+            if (found) {
+                cycleStart = j;
+                cycleEnd = (int) i;
+                break;
+            }
         }
 
-        if (found) {
-            cycleStart = j;
-            cycleEnd = (int)i;
-            break;
-        }
+        if (cycleStart != -1) { break; }
     }
-     std::cout << "Cycle start: " << cycleStart << "; Cycle end: " << cycleEnd << "; \n";
+
+    std::cout << "Cycle start: " << cycleStart << "; Cycle end: " << cycleEnd << "; \n";
+    int loopLength = 1000000000 - cycleStart;
+    int cycleLength = cycleEnd - cycleStart + 1;
+    int loopNum = loopLength % cycleLength;
+    rocks = prev[loopNum + cycleStart];
 
     // print rocks
     for (const auto& row: rocks) {
